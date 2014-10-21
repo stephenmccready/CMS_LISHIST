@@ -1,0 +1,59 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+Create procedure [dbo].[ImportLISHIST] @path As varChar(128), @filename As varChar(128), @emailRecipient As varchar(128)
+As
+
+Begin
+/*
+Drop Table [dbo].[tbl_LISHIST_In]
+Create Table [dbo].[tbl_LISHIST_In] (col001 varchar(max))
+*/
+
+Truncate Table [AC_DataW].[dbo].[tbl_LISHIST_In]
+
+Declare @BulkCmd As nvarChar(4000)
+Set		@BulkCmd = "BULK INSERT tbl_LISHIST_In FROM '"+@path+@filename+"' WITH (FIELDTERMINATOR = '\n')"
+
+Exec	(@BulkCmd)
+
+Declare @today As DateTime
+Set @today=getDate()
+
+Insert	Into [dbo].[tbl_LISHIST_Detail]
+Select	Cast(SUBSTRING(LI.Col001,1,1) As VarChar(1)) As [RecordType],
+		Cast(SUBSTRING(LI.Col001,2,5) As VarChar(5)) As [MCOContractNumber],
+		Cast(SUBSTRING(LI.Col001,7,3) As VarChar(3)) As [PBPNumber],
+		Cast(SUBSTRING(LI.Col001,10,12) As VarChar(12)) As [HICNumber],
+		Cast(SUBSTRING(LI.Col001,22,12) As VarChar(12)) As [Surname],
+		Cast(SUBSTRING(LI.Col001,34,7) As VarChar(7)) As [FirstName],
+		Cast(SUBSTRING(LI.Col001,41,1) As VarChar(1)) As [MiddleInitial],
+		Cast(SUBSTRING(LI.Col001,42,1) As VarChar(1)) As [Sex],
+		Cast(SUBSTRING(LI.Col001,43,8) As VarChar(8)) As [DateofBirth],
+		Cast(SUBSTRING(LI.Col001,51,8) As VarChar(8)) As [LowIncomePeriodStartDate],
+		Cast(SUBSTRING(LI.Col001,59,8) As VarChar(8)) As [LowIncomePeriodEndDate],
+		Cast(SUBSTRING(LI.Col001,67,3) As VarChar(3)) As [LIPSPercentage],
+		Cast(SUBSTRING(LI.Col001,70,8) As VarChar(8)) As [PremiumLISAmount],
+		Cast(SUBSTRING(LI.Col001,78,1) As VarChar(1)) As [LowIncomeCo-payLevelID],
+		Cast(SUBSTRING(LI.Col001,79,1) As VarChar(1)) As [BeneficiarySourceofSubsidyCode],
+		Cast(SUBSTRING(LI.Col001,80,1) As VarChar(1)) As [LISActivityFlag],
+		Cast(SUBSTRING(LI.Col001,81,8) As VarChar(8)) As [PBPStartDate],
+		Cast(SUBSTRING(LI.Col001,89,8) As VarChar(8)) As [NetPartDPremiumAmount],
+		Cast(SUBSTRING(LI.Col001,97,4) As VarChar(4)) As [ContractYear],
+		Cast(SUBSTRING(LI.Col001,101,1) As VarChar(1)) As [InstitutionalStatusIndicator],
+		Cast(SUBSTRING(LI.Col001,102,8) As VarChar(8)) As [PBPEnrollmentTerminationDate],
+		Cast(SUBSTRING(LI.Col001,110,56) As VarChar(56)) As [Filler01],
+		@today As DateImported,
+		@filename As [FileName]
+From	[dbo].[tbl_LISHIST_In] As LI
+Left	Outer Join [dbo].[tbl_LISHIST_Detail] As LD
+		On LD.[RecordType]=SUBSTRING(LI.Col001,1,1)
+		And LD.[MCOContractNumber]=SUBSTRING(LI.Col001,2,5)
+		And LD.[PBPNumber]=SUBSTRING(LI.Col001,7,3)
+		And LD.[FileName]=@filename
+Where	SUBSTRING(LI.Col001,22,12) <> ' '
+        And  SUBSTRING(LI.Col001,1,1) = 'D'
+		And LD.[MCOContractNumber] Is Null
+End
