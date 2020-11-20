@@ -1,8 +1,22 @@
+IF OBJECT_ID('[dbo].[tbl_LISHIST_Header]') IS NOT NULL DROP TABLE [dbo].[tbl_LISHIST_Header]
+
+CREATE TABLE [dbo].[tbl_LISHIST_Header](
+	[LISHISTHeaderId] [int] IDENTITY(1,1) NOT NULL,
+	[RecordType] [varchar](1) NULL, -- H = Header
+	[MCOContractNumber] [varchar](5) NULL,
+	[DataFileDate] [varchar](8) NULL,	-- CCYYMMDD
+	[CalendarMonth] [varchar](6) NULL,	-- CCYYMM
+	[Filler] [varchar](145) NULL,
+	[DataImported] [datetime] NOT NULL,
+	[FileName] [varchar](128) NOT NULL
+)
+
+
 IF OBJECT_ID('[dbo].[tbl_LISHIST_Detail]') IS NOT NULL DROP TABLE [dbo].[tbl_LISHIST_Detail]
 
 CREATE TABLE [dbo].[tbl_LISHIST_Detail](
 	[LISHISTDetailId] [int] IDENTITY(1,1) NOT NULL,
-	[RecordType] [varchar](1) NULL,
+	[RecordType] [varchar](1) NULL, -- D = Detail
 	[MCOContractNumber] [varchar](5) NULL,
 	[PBPNumber] [varchar](3) NULL,
 	[BeneficiaryID] [varchar](12) NULL,
@@ -43,3 +57,16 @@ CREATE TABLE [dbo].[tbl_LISHIST_Detail](
 	[DataImported] [datetime] NOT NULL,
 	[FileName] [varchar](128) NOT NULL
 ) ON [PRIMARY]
+
+
+IF OBJECT_ID('[dbo].[tbl_LISHIST_Trailer]') IS NOT NULL DROP TABLE [dbo].[tbl_LISHIST_Trailer]
+
+CREATE TABLE [dbo].[tbl_LISHIST_Trailer](
+	[LISHISTTrailerId] [int] IDENTITY(1,1) NOT NULL,
+	[RecordType] [varchar](1) NULL, -- T = Trailer
+	[MCOContractNumber] [varchar](5) NULL,
+	[Totals] [varchar](8) NULL,	
+	[Filler] [varchar](151) NULL,
+	[DataImported] [datetime] NOT NULL,
+	[FileName] [varchar](128) NOT NULL
+)
