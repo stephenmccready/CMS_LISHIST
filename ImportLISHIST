@@ -26,7 +26,7 @@ Insert	Into [dbo].[tbl_LISHIST_Detail]
 Select	Cast(SUBSTRING(LI.Col001,1,1) As VarChar(1)) As [RecordType],
 		Cast(SUBSTRING(LI.Col001,2,5) As VarChar(5)) As [MCOContractNumber],
 		Cast(SUBSTRING(LI.Col001,7,3) As VarChar(3)) As [PBPNumber],
-		Cast(SUBSTRING(LI.Col001,10,12) As VarChar(12)) As [HICNumber],
+		Cast(SUBSTRING(LI.Col001,10,12) As VarChar(12)) As [BeneficiaryID],
 		Cast(SUBSTRING(LI.Col001,22,12) As VarChar(12)) As [Surname],
 		Cast(SUBSTRING(LI.Col001,34,7) As VarChar(7)) As [FirstName],
 		Cast(SUBSTRING(LI.Col001,41,1) As VarChar(1)) As [MiddleInitial],
